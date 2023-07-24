@@ -16,7 +16,8 @@ resource "aws_instance" "k8s_controller" {
   }
 
   provisioner "local-exec" {
-    command = "while [ -n ${aws_instance.k8s_controller.public_ip} ]; do echo \"Waiting for controller node setup, sleep for 10 seconds\"; sleep 10; done; scp -i file ubuntu@${aws_instance.k8s_controller.public_ip}/home/ubuntu/join.txt ."
+#    command = "while [ -n ${aws_instance.k8s_controller.public_ip} ]; do echo \"Waiting for controller node setup, sleep for 10 seconds\"; sleep 10; done; scp -i file ubuntu@${aws_instance.k8s_controller.public_ip}/home/ubuntu/join.txt ."
+    command = "scp -i file ubuntu@${aws_instance.k8s_controller.public_ip}/home/ubuntu/join.txt ."
   }
 
 }
