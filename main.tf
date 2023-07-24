@@ -4,7 +4,7 @@ resource "aws_key_pair" "key_pair" {
 }
 
 resource "aws_instance" "k8s_controller" {
-  subnet_id       = aws_subnet.k8s_subnet_B.id
+  subnet_id       = aws_subnet.k8s_subnets[0].id
   ami             = "ami-09420243907777c4a"
   instance_type   = "t2.medium"
   key_name        = aws_key_pair.key_pair.id
@@ -15,31 +15,20 @@ resource "aws_instance" "k8s_controller" {
   }
 
   provisioner "local-exec" {
-    command = "scp -i file ubuntu@${aws_instance.k8s_controller.public_ip}/home/ubuntu/join.txt ."
+    command = "while [ -n ${aws_instance.k8s_controller.public_ip} ]; do echo \"Waiting for controller node setup, sleep for 10 seconds\"; sleep 10; done; scp -i file ubuntu@${aws_instance.k8s_controller.public_ip}/home/ubuntu/join.txt ."
   }
 
 }
 
-
-
-resource "aws_instance" "k8s_node_1" {
-  subnet_id       = aws_subnet.k8s_subnet_A.id
+resource "aws_instance" "k8s_nodes" {
+  count           = length(var.k8s_nodes_list)
+  subnet_id       = aws_subnet.k8s_subnets[1].id
   ami             = "ami-09420243907777c4a"
   instance_type   = "t2.medium"
   key_name        = aws_key_pair.key_pair.id
   security_groups = [aws_security_group.k8s_sg.id]
   tags = {
-    Name = "node-1"
+    Name = "node-${count.index + 1}"
   }
 }
 
-resource "aws_instance" "k8s_node_2" {
-  subnet_id       = aws_subnet.k8s_subnet_A.id
-  ami             = "ami-09420243907777c4a"
-  instance_type   = "t2.medium"
-  key_name        = aws_key_pair.key_pair.id
-  security_groups = [aws_security_group.k8s_sg.id]
-  tags = {
-    Name = "node-2"
-  }
-}

@@ -7,16 +7,15 @@ resource "aws_vpc" "k8s_vpc" {
   }
 }
 
-resource "aws_subnet" "k8s_subnet_A" {
-  vpc_id                  = aws_vpc.k8s_vpc.id
-  cidr_block              = var.subnet_A_range
-  map_public_ip_on_launch = true
-}
+resource "aws_subnet" "k8s_subnets" {
+  vpc_id     = aws_vpc.k8s_vpc.id
+  count      = length(var.subnets_list)
+  cidr_block = cidrsubnet(aws_vpc.k8s_vpc.cidr_block, 8, count.index + 1)
 
-resource "aws_subnet" "k8s_subnet_B" {
-  vpc_id                  = aws_vpc.k8s_vpc.id
-  cidr_block              = var.subnet_B_range
-  map_public_ip_on_launch = true
+  tags = {
+    Name = (count.index == 0 ? "ctrl-subnet" : "exec-subnet-${count.index}")
+  }
+
 }
 
 resource "aws_internet_gateway" "k8s_igw" {
