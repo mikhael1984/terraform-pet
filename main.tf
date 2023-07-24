@@ -10,6 +10,7 @@ resource "aws_instance" "k8s_controller" {
   key_name        = aws_key_pair.key_pair.id
   user_data       = file("./user_data/user_data_controller.sh")
   security_groups = [aws_security_group.k8s_sg.id]
+  associate_public_ip_address = true
   tags = {
     Name = "controller"
   }
@@ -27,6 +28,7 @@ resource "aws_instance" "k8s_nodes" {
   instance_type   = "t2.medium"
   key_name        = aws_key_pair.key_pair.id
   security_groups = [aws_security_group.k8s_sg.id]
+  associate_public_ip_address = true
   tags = {
     Name = "node-${count.index + 1}"
   }
