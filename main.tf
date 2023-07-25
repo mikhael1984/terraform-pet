@@ -16,7 +16,7 @@ resource "aws_instance" "k8s_controller" {
   }
 
   provisioner "local-exec" {
-    command = "until scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i id_rsa ubuntu@${aws_instance.k8s_controller.public_ip}:/home/ubuntu/join.txt .; do echo \"Waiting for file\"; sleep 10; done"
+    command = "until scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i id_rsa ubuntu@${aws_instance.k8s_controller.public_ip}:/home/ubuntu/join.sh .; do echo \"Waiting for file\"; sleep 10; done"
   }
 
 }
@@ -32,5 +32,10 @@ resource "aws_instance" "k8s_nodes" {
   tags = {
     Name = "node-${count.index + 1}"
   }
+
+  provisioner "local-exec" {
+    command = "while [ ! -f ./join.sh ]; do echo \"Waiting for join script from the controller\"; sleep 10; done && scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i id_rsa ./join.sh ubuntu@${aws_instance.k8s_nodes.*.public_ip}:/home/ubuntu/join.sh"
+  }
+
 }
 

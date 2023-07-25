@@ -18,7 +18,6 @@ net.bridge.bridge-nf-call-ip6tables = 1
 EOF
 
 sysctl --system
-sysctl --system
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt-get update && apt-get install -y containerd
 mkdir /etc/containerd
@@ -39,7 +38,7 @@ kubeadm init --pod-network-cidr 192.168.0.0/16 --kubernetes-version 1.24.0
 mkdir -p /home/ubuntu/.kube
 cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 chown -R ubuntu: /home/ubuntu/.kube
-kubectl get nodes
 kubectl apply -f https://docs.projectcalico.org/archive/v3.25/manifests/calico.yaml
-kubectl get nodes
-kubeadm token create --print-join-command > /home/ubuntu/join.txt
+touch join.sh
+echo '#!/bin/bash' > join.sh
+kubeadm token create --print-join-command >> /home/ubuntu/join.sh
