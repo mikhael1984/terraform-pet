@@ -42,4 +42,4 @@ do
 done
 
 chmod +x /home/ubuntu/join.sh
-./join.sh
+/home/ubuntu/join.sh

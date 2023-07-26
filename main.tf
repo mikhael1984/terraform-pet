@@ -29,12 +29,13 @@ resource "aws_instance" "k8s_nodes" {
   key_name                    = aws_key_pair.key_pair.id
   security_groups             = [aws_security_group.k8s_sg.id]
   associate_public_ip_address = true
+  user_data = file("./user_data/user_data_controller.sh")
   tags = {
     Name = "node-${count.index + 1}"
   }
 
   provisioner "local-exec" {
-    command = "while [ ! -f ./join.sh ]; do echo \"Waiting for join script from the controller\"; sleep 10; done && scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i id_rsa ./join.sh ubuntu@${aws_instance.k8s_nodes.*.public_ip}:/home/ubuntu/join.sh"
+    command = "while [ ! -f ./join.sh ]; do echo \"Waiting for join script from the controller\"; sleep 10; done && scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=120 -i id_rsa ./join.sh ubuntu@${aws_instance.k8s_nodes.*.public_ip}:/home/ubuntu/join.sh"
   }
 
 }
