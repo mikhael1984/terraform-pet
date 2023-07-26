@@ -6,7 +6,7 @@ resource "aws_key_pair" "key_pair" {
 resource "aws_instance" "k8s_controller" {
   subnet_id                   = aws_subnet.k8s_subnets[0].id
   ami                         = "ami-09420243907777c4a"
-  instance_type               = "t2.medium"
+  instance_type               = "t2.large"
   key_name                    = aws_key_pair.key_pair.id
   user_data                   = file("./user_data/user_data_controller.sh")
   security_groups             = [aws_security_group.k8s_sg.id]
