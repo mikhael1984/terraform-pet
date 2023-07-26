@@ -35,7 +35,7 @@ resource "aws_instance" "k8s_nodes" {
   }
 
   provisioner "local-exec" {
-    command = "while [ ! -f ./join.sh ]; do echo \"Waiting for join script from the controller\"; sleep 10; done && scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=120 -i id_rsa ./join.sh ubuntu@${aws_instance.k8s_nodes.*.public_ip}:/home/ubuntu/join.sh"
+    command = "while [ ! -f ./join.sh ]; do echo \"Waiting for join script from the controller\"; sleep 10; done && scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=120 -i id_rsa ./join.sh ubuntu@${self.public_ip}:/home/ubuntu/join.sh"
   }
 
 }
