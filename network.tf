@@ -46,3 +46,11 @@ resource "aws_vpc_security_group_ingress_rule" "ssh_me" {
   ip_protocol       = "TCP"
 }
 
+resource "aws_vpc_security_group_ingress_rule" "k8s_traffic" {
+  security_group_id = aws_security_group.k8s_sg.id
+  cidr_ipv4 = "10.0.0.0/8"
+  from_port = 6443
+  to_port = 6443
+  ip_protocol = "TCP"
+}
+

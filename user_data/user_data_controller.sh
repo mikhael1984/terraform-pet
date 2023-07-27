@@ -23,7 +23,6 @@ apt-get update && apt-get install -y containerd
 mkdir /etc/containerd
 containerd config default | tee /etc/containerd/config.toml
 systemctl restart containerd
-systemctl status containerd.service
 swapoff -a
 apt-get install -y apt-transport-https
 
@@ -39,6 +38,5 @@ mkdir -p /home/ubuntu/.kube
 cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 chown -R ubuntu: /home/ubuntu/.kube
 kubectl apply -f https://docs.projectcalico.org/archive/v3.25/manifests/calico.yaml
-touch join.sh
-echo '#!/bin/bash' > join.sh
+echo '#!/bin/bash' > /home/ubuntu/join.sh
 kubeadm token create --print-join-command >> /home/ubuntu/join.sh
